@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Roteiro>
+    
+    <action timer="1500">
+            <obj target="stage">
+                    <tween timer="2000">
+                            <scaleX>2</scaleX>
+                            <scaleY>2</scaleY>
+                    </tween>
+             </obj>
+    </action>
+    
+    <action timer="1500">
+            <obj target="personagem">
+                    <tween timer="2000">
+                            <moveX>200</moveX>
+                            <moveY>360</moveY>
+                    </tween>
+                    <animacao>walk</animacao>
+             </obj>
+    </action>
+    
+    <action timer="1500">
+        <dialog target="personagem">Dahora meu</dialog>
+    </action>
+
+    <action timer="2000">
+            <ui status = "on">
+                    <selectCorrect>
+                            <dialog target="raio">Nao cara! isso e algo ruim..</dialog> 
+                    </selectCorrect>
+                    <selectError> 
+                            <dialog target="raio">Isso aew cara muito bom</dialog>
+                    </selectError>
+            </ui>
+    </action>
+
+</Roteiro>

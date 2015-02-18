@@ -1,0 +1,163 @@
+<!Doctype html>
+<html>
+<head>
+<script src="framework/iGame.js"></script>
+<script src="Dialog.js"></script>
+<script src="Grafico.js"></script>
+<script src="Janela.js"></script>
+<script src="Player.js"></script>
+<script src="Raio.js"></script>
+<script src="Ui.js"></script>
+<script src="Game.js"> </script>
+<meta charset="utf-8" />
+<style>
+    body{
+        margin:0px;
+        padding: 0px;
+    }
+</style>
+</head>
+<body>
+	<canvas id="jogo" width="800" height="600"></canvas>
+	<script>
+                iGame.init(document.getElementById("jogo"), 800, 600, 30);
+                
+		var stage = new iGame.Stage();
+                var chao = null;
+                var chao2 = null;
+                var person = null;
+                var timer = 0;
+                var botao = null;
+                var Tween = null;
+                var stageTween = null;
+                var start = false;
+                var stageT = null;
+                var _game = new Game();
+                
+                function Dispose(){
+                    chao = null;
+                    chao2 = null;
+                    person = null;
+                    timer = null;
+                    botao = null;
+                    Tween = null;
+                    stageTween = null;
+                }
+                
+                function LoadTexturesMenu(){
+                    
+                    iGame.Asset.loadTexture("Asset/fundo.png");
+                    iGame.Asset.loadTexture("Asset/casa_part1.png");
+                    iGame.Asset.loadTexture("Asset/casa_part2.png");
+                    iGame.Asset.loadTexture("Asset/personagem.png");
+                    iGame.Asset.loadTexture("Asset/sol.png");
+                    iGame.Asset.loadTexture("Asset/botao.png");
+                    _game.Load();
+                    
+                    iGame.Asset.loadTexture("Asset/chao_rua.png", function(){
+                        
+                        stage.position.Y = -550;
+                        stage.scale = new iGame.Vector2(2,2);
+                        
+                        var fundo = iGame.Asset.getSprite("Asset/fundo.png");
+                        var sol = iGame.Asset.getSprite("Asset/sol.png");
+                        botao = iGame.Asset.getSpriteTile("Asset/botao.png", 2,1);
+                        
+                        botao.scale = new iGame.Vector2(0.5,0.5);
+                        botao.position = new iGame.Vector2(150,400);
+                        
+                        sol.position = new iGame.Vector2(-20,-30);
+
+                        stage.addChild(fundo);
+                        stage.addChild(sol);
+                        
+                        person = iGame.Asset.getSpriteTile("Asset/personagem.png", 5,1);
+                        person.position.X = 10;
+                        person.position.Y = 360;
+                        person.scale = new iGame.Vector2(0.4,0.4);
+                        
+                        var casa_part1 = iGame.Asset.getSprite("Asset/casa_part1.png");
+                        var casa_part2 = iGame.Asset.getSprite("Asset/casa_part2.png");
+                        
+                        casa_part1.position =  new iGame.Vector2(522,190);
+                        casa_part2.position = new iGame.Vector2(600,90);
+                        
+                        stage.addChild(casa_part1);
+                       
+                        chao = iGame.Asset.getSprite("Asset/chao_rua.png");
+                        chao2 = iGame.Asset.getSprite("Asset/chao_rua.png");
+                        chao.position.Y = 530;
+                        stage.addChild(chao);
+                        
+                        chao2.position.X = chao2.width-10;
+                        chao2.position.Y = 530;
+                        stage.addChild(chao2);
+                        
+                        stage.addChild(person);
+                        stage.addChild(casa_part2);
+                        
+                        stage.addChild(botao);
+                        
+                        Tween = new iGame.Tween(person);
+                        stageTween = new iGame.Tween(stage);
+                        
+                        
+                        Tween.addEventListener("TweenComplete", function(){
+                            stage.Clear();
+                            _game.AddObjects();
+                            stage.addChild(_game);
+                            iGame.Basic.event.removeEventListener("enterFrame", Update);
+                            iGame.Basic.event.addEventListener("enterFrame", _game.Update);
+                            Dispose();
+                        });
+                        
+                        stage.addEventListener("mousedown", BotaoPressed);
+                       
+                       
+                        iGame.Basic.event.addEventListener("enterFrame", Update);
+                        
+                        
+                        
+                    });
+                }
+                
+
+                
+                var BotaoPressed = function(){
+                    if(stage.mousePosition.X > botao.position.X && stage.mousePosition.X < (botao.position.X + botao.tileWidth)){//&& stage.mousePosition.Y > botao.position.Y && stage.mousePosition.Y < botao.position.Y + botao.tileHeight){
+                        stageTween.scaleTo({X:1,Y:1},4000);
+                        stageTween.moveTo({X:0,Y:0},4000);
+                        stageTween.addEventListener("TweenComplete", function(){
+                           stage.scale = new iGame.Vector2(1,1); 
+                           stage.position = new iGame.Vector2(0,0);
+                        });
+                        
+                        stage.removeChild(botao);
+                        start = true;
+                        Tween.moveTo({X:1000,Y:370}, 8000);
+                        stage.removeEventListener("mousedown", BotaoPressed);
+                    }
+                };
+                
+                var Update = function(){
+                    timer += 0.33;
+                    
+                    if(!start){
+                        chao.position.X -= 4;
+                        chao2.position.X -= 4;
+                        if(chao.position.X < -(chao.width-10)) chao.position.X = chao.width-10;
+                        if(chao2.position.X < -(chao2.width-10)) chao2.position.X = chao2.width-10;
+                    }
+                    if(timer>0.7){
+                        timer = 0;
+                        person.update();
+                    }
+                };
+               
+                LoadTexturesMenu();
+                
+                stage.init();
+	</script>
+</body>
+
+</html>
